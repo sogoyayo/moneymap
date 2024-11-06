@@ -1,0 +1,31 @@
+name: Feature Branch Checks
+
+on:
+  push:
+    branches-ignore:
+      - 'dev'
+      - 'staging'
+      - 'prod'
+
+jobs:
+  pre-commit-checks:
+    name: Pre-Commit Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Dependencies
+        run: mvn install -DskipTests
+
+      - name: Linting and Code Quality
+        run: mvn spotless:check
+
+      - name: Run Unit Tests
+        run: mvn test
